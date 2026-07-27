@@ -1,0 +1,23 @@
+{
+  "productName": "Responsive Simulator",
+  "version": "0.1.0",
+  "identifier": "com.responsive.dev",
+  "build": {
+    "beforeDevCommand": "yarn vite",
+    "devUrl": "http://localhost:1420",
+    "beforeBuildCommand": "yarn vite build",
+    "frontendDist": "presentation/dist"
+  },
+  "app": {
+    "windows": []
+  },
+  "bundle": {
+    "icon": [
+      "assets/icons/32x32.png",
+      "assets/icons/128x128.png",
+      "assets/icons/128x128@2x.png",
+      "assets/icons/icon.icns",
+      "assets/icons/icon.ico"
+    ]
+  }
+}

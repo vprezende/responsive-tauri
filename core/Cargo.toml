@@ -1,0 +1,26 @@
+[package]
+name = "responsive-tauri"
+version = "0.1.0"
+description = "A Tauri App"
+authors = ["you"]
+edition = "2021"
+build = "src/build.rs"
+
+[build-dependencies.tauri-build]
+version = "2"
+features = []
+
+[dependencies.tauri]
+version = "2"
+features = ["unstable"]
+
+[dependencies.serde]
+version = "1"
+features = ["derive"]
+
+[dependencies.serde_json]
+version = "1"
+
+[[bin]]
+name = "responsive-tauri"
+path = "src/main.rs"

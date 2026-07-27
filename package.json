@@ -1,0 +1,29 @@
+{
+  "name": "responsive-tauri",
+  "private": true,
+  "version": "0.1.0",
+  "type": "module",
+  "scripts": {
+    "dev": "tauri dev",
+    "build": "tauri build",
+    "clean:vite": "rm -rf node_modules/.vite",
+    "clean:rust": "cd core && cargo clean",
+    "clean": "yarn clean:vite && yarn clean:rust",
+    "lint:vite": "eslint presentation/",
+    "lint:rust": "cargo clippy",
+    "lint": "yarn lint:vite && yarn lint:rust"
+  },
+  "devDependencies": {
+    "@tauri-apps/cli": "^2",
+    "@vitejs/plugin-vue": "^5.0.5",
+    "eslint": "^8.57.0",
+    "eslint-plugin-vue": "^9.23.0",
+    "sass": "^1.77.6",
+    "vite": "^5.3.1"
+  },
+  "dependencies": {
+    "@tauri-apps/api": "^2",
+    "html2canvas": "^1.4.1",
+    "vue": "^3.4.29"
+  }
+}

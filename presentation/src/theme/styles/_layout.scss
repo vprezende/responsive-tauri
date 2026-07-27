@@ -1,0 +1,207 @@
+@use 'variables' as *;
+
+.simulator-layout {
+  display: flex;
+  flex-direction: column;
+  height: 100vh;
+  background-color: #1e1e1e;
+  font-family: 'Segoe UI', sans-serif;
+  user-select: none;
+  -webkit-user-select: none;
+  transform: translateZ(0);
+
+  &.is-resizing, &.is-resizing * {
+    cursor: ew-resize !important;
+  }
+}
+
+input {
+  user-select: auto;
+  -webkit-user-select: auto;
+}
+
+input[type="number"]::-webkit-inner-spin-button,
+input[type="number"]::-webkit-outer-spin-button {
+  -webkit-appearance: none;
+  appearance: none;
+  margin: 0;
+}
+
+input[type="number"] {
+  -moz-appearance: textfield;
+  appearance: textfield;
+}
+
+.simulator-header {
+  display: flex;
+  padding: 12px 20px;
+  background: #2c2c2c;
+  align-items: center;
+  border-bottom: 1px solid #111;
+  box-shadow: 0 4px 6px rgba(0,0,0,0.3);
+  z-index: 10;
+  
+  .controls {
+    display: flex;
+    gap: 15px;
+    align-items: center;
+    flex-wrap: wrap;
+    width: 100%;
+  }
+  
+  .url-input {
+    flex-grow: 1;
+    padding: 8px 12px;
+    border-radius: 6px;
+    border: 1px solid #555;
+    background: #111;
+    color: white;
+    font-size: 14px;
+    outline: none;
+    
+    &:focus {
+      border-color: #0d99ff;
+    }
+  }
+
+  .divider {
+    width: 1px;
+    height: 24px;
+    background-color: #555;
+    margin: 0 10px;
+  }
+
+  .min-width-label {
+    font-size: 13px;
+    color: #ccc;
+  }
+
+  .input-small {
+    width: 60px;
+    padding: 8px;
+    border-radius: 6px;
+    border: 1px solid #555;
+    background: #111;
+    color: white;
+    text-align: center;
+    font-size: 14px;
+    outline: none;
+  }
+  
+  .btn {
+    padding: 8px 20px;
+    border: none;
+    border-radius: 6px;
+    cursor: pointer;
+    font-weight: bold;
+    transition: 0.2s;
+    font-size: 14px;
+    
+    &.btn-primary {
+      background: #0d99ff;
+      color: white;
+      
+      &:hover {
+        background: #007acc;
+      }
+    }
+
+    &.btn-touch {
+      background: #444;
+      color: white;
+      
+      &:hover {
+        background: #555;
+      }
+      
+      &.active {
+        background: #4caf50 !important;
+      }
+    }
+  }
+}
+
+.simulator-canvas {
+  flex-grow: 1;
+  background: #1e1e1e;
+  position: relative;
+  overflow: hidden;
+}
+
+.welcome-screen {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  text-align: center;
+  h1 {
+    color: #fff;
+    margin-bottom: 10px;
+    font-weight: 500;
+  }
+  p {
+    color: #aaa;
+  }
+}
+
+.device-container {
+  height: 90%;
+  min-height: 500px;
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  border-radius: 12px;
+  box-shadow: 0 10px 40px rgba(0,0,0,0.5);
+  background: transparent;
+  will-change: width, height, transform;
+}
+
+.webview-wrapper {
+  width: 100%;
+  height: 100%;
+  border-radius: 12px;
+  overflow: hidden;
+}
+
+.webview-frame {
+  width: 100%;
+  height: 100%;
+  border: none;
+  background-color: transparent;
+  will-change: width, height;
+  outline: none !important;
+
+  &:focus, &:active {
+    outline: none !important;
+  }
+}
+
+.resize-handle {
+  position: absolute;
+  top: 0;
+  right: -4px;
+  width: 8px;
+  height: 100%;
+  background: transparent;
+  cursor: ew-resize;
+  z-index: 10;
+  outline: none !important;
+  -webkit-tap-highlight-color: transparent;
+}
+
+.size-info {
+  position: absolute;
+  top: -35px;
+  left: 50%;
+  transform: translateX(-50%);
+  background: #0d99ff;
+  color: #fff;
+  padding: 4px 12px;
+  border-radius: 12px;
+  font-size: 12px;
+  font-weight: 500;
+  letter-spacing: 0.5px;
+  box-shadow: 0 4px 12px rgba(13, 153, 255, 0.3);
+  z-index: 20;
+}
