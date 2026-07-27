@@ -65,6 +65,10 @@
       const onPointerUp = (e) => {
         if (isResizing.value) {
           isResizing.value = false;
+          const iframe = document.querySelector('.webview-frame');
+          if (iframe && iframe.contentWindow) {
+            iframe.contentWindow.postMessage('show-cursor', '*');
+          }
           if (e.target && e.target.releasePointerCapture) {
             try { 
               e.target.releasePointerCapture(e.pointerId); 

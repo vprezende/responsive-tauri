@@ -6,6 +6,10 @@ style.innerHTML = `__INJECT_CSS__`;
 
 document.documentElement.appendChild(style)
 
+const EDGE = 4;
+
+let wasNearEdge = false;
+
 const triggerLeave = () => {
   document.dispatchEvent(
     new MouseEvent('mouseleave', { 
@@ -24,9 +28,13 @@ const triggerLeave = () => {
   );
 };
 
-const EDGE = 4;
-
-let wasNearEdge = false;
+const triggerLeaveOnce = () => {
+  if (wasNearEdge) {
+    return;
+  }
+  wasNearEdge = true;
+  triggerLeave();
+};
 
 window.addEventListener(
   'mousemove', 
@@ -37,42 +45,20 @@ window.addEventListener(
     }
 
     const isNearEdge = [
-      e.clientX, 
+      e.clientX,
       e.clientY,
       window.innerWidth - e.clientX,
       window.innerHeight - e.clientY,
     ].some(distance => distance <= EDGE);
 
     if (isNearEdge) {
-      wasNearEdge = false;
-      return;
+      return triggerLeaveOnce();
     }
 
-    if (wasNearEdge) {
-      return;
-    }
-
-    wasNearEdge = true;
-
-    document.dispatchEvent(
-      new MouseEvent('mousemove', {
-        view: window, 
-        bubbles: true, 
-        cancelable: true,
-      })
-    );
-    triggerLeave();
+    wasNearEdge = false;
   }, 
   true
 );
-
-const triggerLeaveOnce = () => {
-  if (wasNearEdge) {
-    return;
-  }
-  wasNearEdge = true;
-  triggerLeave();
-};
 
 document.addEventListener(
   'mouseleave', 
@@ -82,6 +68,14 @@ document.addEventListener(
     }
     triggerLeaveOnce();
   }, 
+  true
+);
+
+document.addEventListener(
+  'mouseenter',
+  () => {
+    wasNearEdge = false;
+  },
   true
 );
 
