@@ -6,11 +6,9 @@ style.innerHTML = `__INJECT_CSS__`;
 
 document.documentElement.appendChild(style)
 
-const EDGE = 4;
+const EDGE = 15;
 
-let wasNearEdge = false;
-
-const triggerLeave = () => {
+const hideCursor = () => {
   document.dispatchEvent(
     new MouseEvent('mouseleave', { 
       view: window, 
@@ -23,17 +21,9 @@ const triggerLeave = () => {
       view: window, 
       bubbles: true, 
       cancelable: true, 
-      relatedTarget: null 
+      relatedTarget: null
     })
   );
-};
-
-const triggerLeaveOnce = () => {
-  if (wasNearEdge) {
-    return;
-  }
-  wasNearEdge = true;
-  triggerLeave();
 };
 
 window.addEventListener(
@@ -51,11 +41,12 @@ window.addEventListener(
       window.innerHeight - e.clientY,
     ].some(distance => distance <= EDGE);
 
-    if (isNearEdge) {
-      return triggerLeaveOnce();
+    if (!isNearEdge) {
+      return;
     }
 
-    wasNearEdge = false;
+    hideCursor();
+    e.stopPropagation();
   }, 
   true
 );
@@ -66,16 +57,8 @@ document.addEventListener(
     if (!e.isTrusted) {
       return;
     }
-    triggerLeaveOnce();
+    hideCursor();
   }, 
-  true
-);
-
-document.addEventListener(
-  'mouseenter',
-  () => {
-    wasNearEdge = false;
-  },
   true
 );
 
@@ -85,6 +68,6 @@ window.addEventListener(
     if (e.data !== 'hide-cursor') {
       return;
     }
-    triggerLeaveOnce();
+    hideCursor();
   }
 );
