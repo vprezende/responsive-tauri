@@ -1,6 +1,6 @@
 <script>
 
-  import { ref, onMounted, onUnmounted } from 'vue';
+  import { ref } from 'vue';
 
   export default {
     setup() {
@@ -14,100 +14,45 @@
       const wrapper = ref(null);
       const webview = ref(null);
 
-      const isResizing = ref(false);
-      let startX = 0;
-      let startWidth = 0;
+      const activeTab = ref('viewport');
 
       const loadUrl = async () => {
-        let finalUrl = url.value.trim();
-        if (!finalUrl) return;
         
-        if (!finalUrl.startsWith('http://') && !finalUrl.startsWith('https://')) {
-          finalUrl = 'https://' + finalUrl;
+        let finalUrl = url.value.trim()
+        
+        if (!finalUrl) {
+          return
         }
-        currentUrl.value = finalUrl;
-        hasNavigated.value = true;
+
+        const protocols = ['http://', 'https://']
+
+        const hasProtocol = protocols.some(
+          p => finalUrl.startsWith(p)
+        )
+        
+        if (hasProtocol) {
+          currentUrl.value = finalUrl
+          hasNavigated.value = true
+          return
+        }
+
+        let prefix = ''
+
+        try {
+          new URL('http://' + finalUrl)
+          prefix = 'http://'
+        } catch {
+          new URL('https://' + finalUrl)
+          prefix = 'https://'
+        }
+
+        if (prefix) {
+          finalUrl = prefix + finalUrl
+        }
+
+        currentUrl.value = finalUrl
+        hasNavigated.value = true
       };
-
-      const onPointerDown = (e) => {
-        e.preventDefault();
-        isResizing.value = true;
-        startX = e.clientX;
-        startWidth = currentWidth.value;
-        
-        if (e.target && e.target.setPointerCapture) {
-          e.target.setPointerCapture(e.pointerId);
-        }
-        
-        const iframe = document.querySelector('.webview-frame');
-        if (iframe && iframe.contentWindow) {
-          iframe.contentWindow.postMessage('hide-cursor', '*');
-        }
-      };
-
-      const onPointerMove = (e) => {
-        if (!isResizing.value) return;
-        
-        const dx = e.clientX - startX;
-        let newWidth = startWidth + (dx * 2);
-        
-        if (newWidth < minWidth.value) {
-          newWidth = minWidth.value;
-        }
-        
-        currentWidth.value = newWidth;
-        
-        if (deviceContainer.value) {
-          deviceContainer.value.style.width = newWidth + 'px';
-        }
-      };
-
-      const onPointerUp = (e) => {
-        if (isResizing.value) {
-          isResizing.value = false;
-          const iframe = document.querySelector('.webview-frame');
-          if (iframe && iframe.contentWindow) {
-            iframe.contentWindow.postMessage('show-cursor', '*');
-          }
-          if (e.target && e.target.releasePointerCapture) {
-            try { 
-              e.target.releasePointerCapture(e.pointerId); 
-            } catch(err) {
-              throw new Error(`Error: ${err}`);
-            }
-          }
-        }
-      };
-
-      const onPointerCancel = (e) => {
-        const isCurrentlyResizing = isResizing.value;
-        const target = e.currentTarget;
-        const pointerId = e.pointerId;
-        
-        const hasPointerCapture = target.hasPointerCapture(pointerId);
-
-        if (!isCurrentlyResizing) return;
-
-        isResizing.value = false;
-
-        if (hasPointerCapture) {
-          target.releasePointerCapture(pointerId);
-        }
-      };
-
-      onMounted(() => {
-        window.addEventListener('pointermove', onPointerMove);
-        window.addEventListener('pointerup', onPointerUp);
-        window.addEventListener('pointercancel', onPointerCancel);
-        document.addEventListener('mouseleave', onPointerCancel);
-      });
-
-      onUnmounted(() => {
-        window.removeEventListener('pointermove', onPointerMove);
-        window.removeEventListener('pointerup', onPointerUp);
-        window.removeEventListener('pointercancel', onPointerCancel);
-        document.removeEventListener('mouseleave', onPointerCancel);
-      });
 
       const state = {
         url,
@@ -115,7 +60,7 @@
         hasNavigated,
         minWidth,
         currentWidth,
-        isResizing,
+        activeTab,
       }
 
       const elements = {
@@ -126,7 +71,6 @@
 
       const actions = {
         loadUrl,
-        onPointerDown,
       }
 
       return {
@@ -139,43 +83,83 @@
 </script>
 
 <template>
-  <div
-    class="simulator-layout"
-    :class="{ 'is-resizing': isResizing }"
-  >
-    <header class="simulator-header">
-      <div class="controls">
-        <input 
-          v-model="url" 
-          type="text" 
-          placeholder="Digite uma URL para testar (ex: http://localhost:5173)" 
-          class="url-input"
-          @keyup.enter="loadUrl"
-        >
-        <button
-          class="btn btn-primary"
-          @click="loadUrl"
-        >
-          Testar Site
-        </button>
-        
-        <div class="divider" />
+  <div class="simulator-layout">
+    <aside class="sidebar">
+      <div
+        class="drag-region"
+        data-tauri-drag-region
+      />
+      <div class="sidebar-inner">
+        <div class="tab-bar">
+          <button 
+            class="tab" 
+            :class="{ active: activeTab === 'viewport' }"
+            @click="activeTab = 'viewport'"
+          >
+            Viewport
+          </button>
+          <button 
+            class="tab" 
+            :class="{ active: activeTab === 'inspect' }"
+            @click="activeTab = 'inspect'"
+          >
+            Inspect
+          </button>
+        </div>
 
-        <label class="min-width-label">Trava Mínima (px):</label>
-        <input 
-          v-model.number="minWidth" 
-          type="number"
-          class="input-small"
-        >
+        <div class="tab-content">
+          <div v-if="activeTab === 'viewport'">
+            <div class="section">
+              <div class="section-title">
+                URL
+              </div>
+              <div class="url-row">
+                <input 
+                  v-model="url" 
+                  type="text" 
+                  placeholder="https://..." 
+                  class="url-input"
+                >
+                <button 
+                  class="btn-icon" 
+                  title="Carregar" 
+                  @click="loadUrl"
+                >
+                  &#x27A4;
+                </button>
+              </div>
+            </div>
+            <div class="section">
+              <div class="section-title">
+                Layout
+              </div>
+              <input 
+                v-model.number="currentWidth"
+                type="range"
+                :min="minWidth"
+                max="1920"
+                class="width-slider"
+              >
+              <div class="size-row">
+                <span class="size-value">{{ Math.round(currentWidth) }}px</span>
+              </div>
+            </div>
+          </div>
+
+          <div 
+            v-if="activeTab === 'inspect'" 
+            class="section"
+          />
+        </div>
       </div>
-    </header>
+    </aside>
     
     <main class="simulator-canvas">
-      <div
-        v-if="!hasNavigated"
+      <div 
+        v-if="!hasNavigated" 
         class="welcome-screen"
       >
-        <h1>Responsive Inspector</h1>
+        <h1>Responsive Simulator</h1>
         <p>Digite a URL de qualquer site acima para iniciar a simulação.</p>
       </div>
 
@@ -188,24 +172,19 @@
         <div class="size-info">
           {{ Math.round(currentWidth) }} px
         </div>
-        <div
-          ref="wrapper"
+        <div 
+          ref="wrapper" 
           class="webview-wrapper"
         >
           <iframe 
             v-if="hasNavigated"
             ref="webview"
+            :key="currentUrl"
             :src="currentUrl"
             class="webview-frame"
             frameborder="0"
-            :style="{ pointerEvents: isResizing ? 'none' : 'auto' }"
           />
         </div>
-        <div 
-          class="resize-handle" 
-          :class="{ active: isResizing }"
-          @pointerdown="onPointerDown"
-        />
       </div>
     </main>
   </div>
