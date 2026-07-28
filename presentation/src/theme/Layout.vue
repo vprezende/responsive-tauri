@@ -154,7 +154,7 @@
       </div>
     </aside>
     
-    <main class="simulator-canvas">
+    <main class="device-canvas">
       <div 
         v-if="!hasNavigated" 
         class="welcome-screen"
@@ -165,31 +165,30 @@
 
       <div 
         v-show="hasNavigated"
-        class="size-info-wrapper"
+        class="device-group"
       >
         <div class="size-info">
           {{ Math.round(currentWidth) }} px
         </div>
-      </div>
 
-      <div 
-        v-show="hasNavigated"
-        ref="deviceContainer"
-        class="device-container"
-        :style="{ width: currentWidth + 'px' }"
-      >
         <div 
-          ref="wrapper" 
-          class="webview-wrapper"
+          ref="deviceContainer"
+          class="device-container"
+          :style="{ width: currentWidth + 'px' }"
         >
-          <iframe 
-            v-if="hasNavigated"
-            ref="webview"
-            :key="currentUrl"
-            :src="currentUrl"
-            class="webview-frame"
-            frameborder="0"
-          />
+          <div 
+            ref="wrapper" 
+            class="webview-wrapper"
+          >
+            <iframe 
+              v-if="hasNavigated"
+              ref="webview"
+              :key="currentUrl"
+              :src="currentUrl"
+              class="webview-frame"
+              frameborder="0"
+            />
+          </div>
         </div>
       </div>
     </main>
