@@ -82,7 +82,7 @@
   <div class="workspace">
     <aside class="sidebar">
       <div
-        class="drag-region"
+        class="titlebar"
         data-tauri-drag-region
       />
       <div class="sidebar-inner">
