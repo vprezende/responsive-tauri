@@ -10,8 +10,6 @@
 
       const minWidth = ref(320);
       const currentWidth = ref(1000);
-      const deviceContainer = ref(null);
-      const wrapper = ref(null);
       const webview = ref(null);
 
       const activeTab = ref('viewport');
@@ -64,8 +62,6 @@
       }
 
       const elements = {
-        deviceContainer,
-        wrapper,
         webview,
       }
 
@@ -83,7 +79,7 @@
 </script>
 
 <template>
-  <div class="simulator-layout">
+  <div class="workspace">
     <aside class="sidebar">
       <div
         class="drag-region"
@@ -154,43 +150,31 @@
       </div>
     </aside>
     
-    <main class="device-canvas">
-      <div 
-        v-if="!hasNavigated" 
-        class="welcome-screen"
-      >
-        <h1>Responsive Simulator</h1>
-        <p>Digite a URL de qualquer site acima para iniciar a simulação.</p>
+    <div 
+      v-if="!hasNavigated" 
+      class="welcome-screen"
+    >
+      <h1>Responsive Simulator</h1>
+      <p>Digite a URL de qualquer site acima para iniciar a simulação.</p>
+    </div>
+
+    <div 
+      v-show="hasNavigated"
+      class="device-group"
+    >
+      <div class="size-info">
+        {{ Math.round(currentWidth) }} px
       </div>
 
-      <div 
-        v-show="hasNavigated"
-        class="device-group"
-      >
-        <div class="size-info">
-          {{ Math.round(currentWidth) }} px
-        </div>
-
-        <div 
-          ref="deviceContainer"
-          class="device-container"
-          :style="{ width: currentWidth + 'px' }"
-        >
-          <div 
-            ref="wrapper" 
-            class="webview-wrapper"
-          >
-            <iframe 
-              v-if="hasNavigated"
-              ref="webview"
-              :key="currentUrl"
-              :src="currentUrl"
-              class="webview-frame"
-              frameborder="0"
-            />
-          </div>
-        </div>
-      </div>
-    </main>
+      <iframe 
+        v-if="hasNavigated"
+        ref="webview"
+        :key="currentUrl"
+        :src="currentUrl"
+        class="webview-frame"
+        :style="{ width: currentWidth + 'px' }"
+        frameborder="0"
+      />
+    </div>
   </div>
 </template>
