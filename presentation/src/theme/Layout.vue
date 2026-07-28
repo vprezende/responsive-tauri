@@ -165,13 +165,19 @@
 
       <div 
         v-show="hasNavigated"
-        ref="deviceContainer"
-        class="device-container"
-        :style="{ width: currentWidth + 'px' }"
+        class="size-info-wrapper"
       >
         <div class="size-info">
           {{ Math.round(currentWidth) }} px
         </div>
+      </div>
+
+      <div 
+        v-show="hasNavigated"
+        ref="deviceContainer"
+        class="device-container"
+        :style="{ width: currentWidth + 'px' }"
+      >
         <div 
           ref="wrapper" 
           class="webview-wrapper"
