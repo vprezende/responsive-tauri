@@ -1,7 +1,3 @@
-// === COSPECTRA MAIN FRAME DETECTION ===
-// This script runs in ALL frames (main + iframes) via Tauri's initialization_script_for_all_frames.
-// Only iframes (not the main Cospectra app) should run the inspector logic.
-
 document.documentElement.classList.add('cospectra-scrollbar-hidden');
 
 const style = document.createElement('style');
@@ -82,53 +78,195 @@ window.addEventListener(
 if (window !== window.top) {
   (function() {
     let inspectEnabled = false;
+    var hiddenCursorElements = [];
 
-    // Inject a crosshair cursor style that we can toggle
-    var cursorStyle = document.createElement('style');
-    cursorStyle.id = '__cospectra_cursor_style';
-    cursorStyle.textContent = '';
-    document.documentElement.appendChild(cursorStyle);
+    // === REAL-TIME URL CHANGE MONITORING ===
+    var lastReportedUrl = '';
+    function checkAndReportUrlChange() {
+      try {
+        var currentHref = window.location.href;
+        if (currentHref && currentHref !== lastReportedUrl && currentHref !== 'about:blank') {
+          lastReportedUrl = currentHref;
+          window.parent.postMessage({
+            type: 'COSPECTRA_URL_CHANGED',
+            url: currentHref
+          }, '*');
+        }
+      } catch (err) {}
+    }
+
+    checkAndReportUrlChange();
+    window.addEventListener('popstate', checkAndReportUrlChange);
+    window.addEventListener('hashchange', checkAndReportUrlChange);
+    document.addEventListener('DOMContentLoaded', checkAndReportUrlChange);
+
+    // Patch history.pushState and history.replaceState for SPA navigation
+    try {
+      var origPushState = history.pushState;
+      if (origPushState) {
+        history.pushState = function() {
+          origPushState.apply(this, arguments);
+          setTimeout(checkAndReportUrlChange, 50);
+        };
+      }
+      var origReplaceState = history.replaceState;
+      if (origReplaceState) {
+        history.replaceState = function() {
+          origReplaceState.apply(this, arguments);
+          setTimeout(checkAndReportUrlChange, 50);
+        };
+      }
+    } catch (err) {}
+
+    // Polling backup to guarantee real-time sync
+    setInterval(checkAndReportUrlChange, 400);
+
+    // Detect and hide custom cursor elements programmatically
+    // These are typically position:fixed, pointer-events:none, small divs with high z-index
+    function hideCustomCursorElements() {
+      hiddenCursorElements = [];
+      var allEls = document.querySelectorAll('*');
+      for (var i = 0; i < allEls.length; i++) {
+        var el = allEls[i];
+        // Skip our own elements
+        if (el.id && el.id.startsWith('__cospectra_')) continue;
+        var cs = window.getComputedStyle(el);
+        var isFixed = cs.position === 'fixed';
+        var noPointer = cs.pointerEvents === 'none';
+        var rect = el.getBoundingClientRect();
+        var isSmall = rect.width <= 80 && rect.height <= 80 && rect.width > 0 && rect.height > 0;
+        var zVal = parseInt(cs.zIndex);
+        var hasHighZ = zVal > 900 || cs.zIndex === 'auto';
+
+        if (isFixed && noPointer && isSmall && hasHighZ) {
+          hiddenCursorElements.push({ el: el, prevVis: el.style.visibility, prevOp: el.style.opacity });
+          el.style.setProperty('visibility', 'hidden', 'important');
+          el.style.setProperty('opacity', '0', 'important');
+        }
+      }
+    }
+
+    // Restore hidden custom cursor elements
+    function restoreCustomCursorElements() {
+      for (var i = 0; i < hiddenCursorElements.length; i++) {
+        var item = hiddenCursorElements[i];
+        item.el.style.visibility = item.prevVis || '';
+        item.el.style.opacity = item.prevOp || '';
+      }
+      hiddenCursorElements = [];
+    }
 
     // Listen for inspect mode toggle from parent (Cospectra Vue app)
     window.addEventListener('message', function(e) {
       if (e.data && e.data.type === 'COSPECTRA_SET_INSPECT') {
         inspectEnabled = e.data.enabled;
-        // Toggle crosshair cursor on ALL elements inside the iframe
         if (inspectEnabled) {
-          cursorStyle.textContent = '*, *::before, *::after { cursor: crosshair !important; }';
+          // Toggle class that activates crosshair cursor + hides CSS-detectable cursor elements
+          document.documentElement.classList.add('cospectra-inspect-active');
+          // Also programmatically hide cursor elements that CSS selectors can't catch
+          hideCustomCursorElements();
         } else {
-          cursorStyle.textContent = '';
-          // Remove any existing highlight overlay
-          var existing = document.getElementById('__cospectra_hover_overlay');
-          if (existing) existing.style.display = 'none';
+          document.documentElement.classList.remove('cospectra-inspect-active');
+          restoreCustomCursorElements();
+          // Hide overlay and tooltip
+          var overlay = document.getElementById('__cospectra_hover_overlay');
+          if (overlay) overlay.style.display = 'none';
+          var tip = document.getElementById('__cospectra_hover_tooltip');
+          if (tip) tip.style.display = 'none';
         }
       }
     });
 
-    // Create a highlight overlay element inside the iframe
+    // Create highlight overlay element (styles defined in webview.css)
     var overlay = document.createElement('div');
     overlay.id = '__cospectra_hover_overlay';
-    overlay.style.cssText = 'position:fixed;pointer-events:none;z-index:2147483647;border:2px solid #358ef1;background:rgba(53,142,241,0.12);display:none;transition:top 0.06s ease-out,left 0.06s ease-out,width 0.06s ease-out,height 0.06s ease-out;';
     document.documentElement.appendChild(overlay);
 
-    // Create a tooltip label for hovered element
+    // Create tooltip label (styles defined in webview.css)
     var tooltip = document.createElement('div');
     tooltip.id = '__cospectra_hover_tooltip';
-    tooltip.style.cssText = 'position:fixed;pointer-events:none;z-index:2147483647;background:#1e1e2e;color:#58a6ff;font-family:monospace;font-size:11px;font-weight:600;padding:3px 8px;border-radius:4px;box-shadow:0 2px 8px rgba(0,0,0,0.4);display:none;white-space:nowrap;';
     document.documentElement.appendChild(tooltip);
+
+    // Calculate effective border-radius taking into account:
+    // 1) Direct element border-radius
+    // 2) Parent container border-radius & clipping (when child touches parent corner)
+    // 3) Webview window frame rounded corners (14px = 0.875rem) when element touches iframe boundaries
+    function getEffectiveBorderRadius(target, r) {
+      var comp = window.getComputedStyle(target);
+      
+      var tl = parseFloat(comp.borderTopLeftRadius) || 0;
+      var tr = parseFloat(comp.borderTopRightRadius) || 0;
+      var br = parseFloat(comp.borderBottomRightRadius) || 0;
+      var bl = parseFloat(comp.borderBottomLeftRadius) || 0;
+
+      // Check parent tree for containers with rounded corners
+      var curr = target.parentElement;
+      while (curr && curr !== document.documentElement && curr !== document.body) {
+        var pComp = window.getComputedStyle(curr);
+        var pR = curr.getBoundingClientRect();
+        
+        var pTl = parseFloat(pComp.borderTopLeftRadius) || 0;
+        var pTr = parseFloat(pComp.borderTopRightRadius) || 0;
+        var pBr = parseFloat(pComp.borderBottomRightRadius) || 0;
+        var pBl = parseFloat(pComp.borderBottomLeftRadius) || 0;
+
+        if (pTl > 0 || pTr > 0 || pBr > 0 || pBl > 0) {
+          // If child touches parent's top-left corner
+          if (Math.abs(r.top - pR.top) <= 5 && Math.abs(r.left - pR.left) <= 5) {
+            tl = Math.max(tl, pTl);
+          }
+          // If child touches parent's top-right corner
+          if (Math.abs(r.top - pR.top) <= 5 && Math.abs(r.right - pR.right) <= 5) {
+            tr = Math.max(tr, pTr);
+          }
+          // If child touches parent's bottom-right corner
+          if (Math.abs(r.bottom - pR.bottom) <= 5 && Math.abs(r.right - pR.right) <= 5) {
+            br = Math.max(br, pBr);
+          }
+          // If child touches parent's bottom-left corner
+          if (Math.abs(r.bottom - pR.bottom) <= 5 && Math.abs(r.left - pR.left) <= 5) {
+            bl = Math.max(bl, pBl);
+          }
+        }
+        curr = curr.parentElement;
+      }
+
+      // Check Webview Frame Viewport Edges (web frame radius is 0.875rem = 14px)
+      var FRAME_RADIUS = 14;
+      var winW = window.innerWidth;
+      var winH = window.innerHeight;
+
+      if (r.top <= 5 && r.left <= 5) {
+        tl = Math.max(tl, FRAME_RADIUS);
+      }
+      if (r.top <= 5 && r.right >= winW - 5) {
+        tr = Math.max(tr, FRAME_RADIUS);
+      }
+      if (r.bottom >= winH - 5 && r.right >= winW - 5) {
+        br = Math.max(br, FRAME_RADIUS);
+      }
+      if (r.bottom >= winH - 5 && r.left <= 5) {
+        bl = Math.max(bl, FRAME_RADIUS);
+      }
+
+      return tl + 'px ' + tr + 'px ' + br + 'px ' + bl + 'px';
+    }
 
     // Hover handler: highlight element and send rect to parent
     document.addEventListener('mousemove', function(e) {
       if (!inspectEnabled) return;
       var target = e.target;
       if (!target || target === overlay || target === tooltip || target === document.body || target === document.documentElement) return;
+      if (target.id && target.id.startsWith('__cospectra_')) return;
 
       var r = target.getBoundingClientRect();
+
       overlay.style.display = 'block';
       overlay.style.top = r.top + 'px';
       overlay.style.left = r.left + 'px';
       overlay.style.width = r.width + 'px';
       overlay.style.height = r.height + 'px';
+      overlay.style.borderRadius = getEffectiveBorderRadius(target, r);
 
       var tag = target.tagName.toLowerCase();
       var idName = target.id || '';
@@ -236,7 +374,9 @@ if (window !== window.top) {
       window.parent.postMessage({
         type: 'COSPECTRA_INSPECT_DATA',
         action: 'click',
-        rect: { top: r.top, left: r.left, width: r.width, height: r.height },
+        rect: { 
+          top: r.top, 
+          left: r.left, width: r.width, height: r.height },
         tag: tag,
         idName: idName,
         className: className,

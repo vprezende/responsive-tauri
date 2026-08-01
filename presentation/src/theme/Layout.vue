@@ -40,7 +40,9 @@
         }
 
         const protocols = ['http://', 'https://'];
-        const hasProtocol = protocols.some(p => finalUrl.startsWith(p));
+        const hasProtocol = protocols.some(
+          p => finalUrl.startsWith(p)
+        );
         
         if (hasProtocol) {
           currentUrl.value = finalUrl;
@@ -86,8 +88,19 @@
 
       // Receives real-time postMessage events from the injected Tauri iframe script
       const handleWindowMessage = (event) => {
-        if (!event.data || event.data.type !== 'COSPECTRA_INSPECT_DATA') return;
+        if (!event.data) return;
         const data = event.data;
+
+        // Real-time URL change monitoring from iframe navigation
+        if (data.type === 'COSPECTRA_URL_CHANGED') {
+          if (data.url && data.url !== currentUrl.value) {
+            url.value = data.url;
+            currentUrl.value = data.url;
+          }
+          return;
+        }
+
+        if (data.type !== 'COSPECTRA_INSPECT_DATA') return;
         
         if (data.action === 'hover') {
           if (isInspecting.value) {
@@ -477,7 +490,7 @@
         <div class="size-info">
           <span>Viewport</span>
           <span>•</span>
-          <span>{{ Math.round(currentWidth) }} × 100%</span>
+          <span>{{ Math.round(currentWidth) }} x 100%</span>
         </div>
 
         <div class="iframe-wrapper">

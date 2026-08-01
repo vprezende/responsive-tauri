@@ -5,3 +5,56 @@
     display: none;
   }
 }
+
+/* === Inspect Mode: Force crosshair cursor on ALL elements === */
+.cospectra-inspect-active,
+.cospectra-inspect-active *,
+.cospectra-inspect-active *::before,
+.cospectra-inspect-active *::after {
+  cursor: crosshair !important;
+}
+
+/* Hide custom cursor elements (divs that follow mouse) when inspecting */
+.cospectra-inspect-active [class*="cursor" i],
+.cospectra-inspect-active [id*="cursor" i],
+.cospectra-inspect-active [data-cursor],
+.cospectra-inspect-active .custom-cursor,
+.cospectra-inspect-active .cursor-dot,
+.cospectra-inspect-active .cursor-follower,
+.cospectra-inspect-active .cursor-outline,
+.cospectra-inspect-active .cursor-inner,
+.cospectra-inspect-active .cursor-outer {
+  display: none !important;
+  visibility: hidden !important;
+  opacity: 0 !important;
+  pointer-events: none !important;
+}
+
+/* === Overlay highlight === */
+#__cospectra_hover_overlay {
+  position: fixed;
+  pointer-events: none;
+  z-index: 2147483647;
+  box-sizing: border-box;
+  border: 2px solid #358ef1;
+  background: rgba(53, 142, 241, 0.12);
+  display: none;
+  transition: top 0.06s ease-out, left 0.06s ease-out, width 0.06s ease-out, height 0.06s ease-out, border-radius 0.06s ease-out;
+}
+
+/* === Tooltip label === */
+#__cospectra_hover_tooltip {
+  position: fixed;
+  pointer-events: none;
+  z-index: 2147483647;
+  background: #1e1e2e;
+  color: #58a6ff;
+  font-family: monospace;
+  font-size: 11px;
+  font-weight: 600;
+  padding: 3px 8px;
+  border-radius: 4px;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.4);
+  display: none;
+  white-space: nowrap;
+}

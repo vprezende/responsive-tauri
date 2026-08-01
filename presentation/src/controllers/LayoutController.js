@@ -31,13 +31,13 @@ const loadState = () => {
 export function useLayoutController() {
   const saved = loadState();
 
-  const url = ref(saved.url)
-  const currentUrl = ref(saved.currentUrl)
-  const hasNavigated = ref(saved.hasNavigated)
-  const minWidth = ref(320)
-  const currentWidth = ref(saved.currentWidth)
-  const activeTab = ref(saved.activeTab)
-  const theme = ref(saved.theme)
+  const url = ref(saved.url || '');
+  const currentUrl = ref('');
+  const hasNavigated = ref(false);
+  const minWidth = ref(320);
+  const currentWidth = ref(saved.currentWidth || 1000);
+  const activeTab = ref(saved.activeTab || 'viewport');
+  const theme = ref(saved.theme || 'dark');
 
   const saveState = () => {
     localStorage.setItem(
