@@ -1,4 +1,4 @@
-.scroll-container {
+.cospectra-scrollbar-hidden {
   scrollbar-width: none;
 
   &::-webkit-scrollbar {

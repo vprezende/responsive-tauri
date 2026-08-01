@@ -1,7 +1,7 @@
 {
-  "productName": "Responsive Simulator",
+  "productName": "Cospectra",
   "version": "0.1.0",
-  "identifier": "com.responsive.dev",
+  "identifier": "com.cospectra.dev",
   "build": {
     "beforeDevCommand": "yarn vite",
     "devUrl": "http://localhost:1420",

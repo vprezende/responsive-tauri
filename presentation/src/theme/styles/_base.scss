@@ -1,14 +1,14 @@
-@use 'variables' as *;
-
 html, body {
   margin: 0;
   padding: 0;
   width: 100%;
   height: 100%;
-  background-color: $color-bg-canvas;
-  color: $color-text;
-  font-family: 'Inter', system-ui, sans-serif;
+  background-color: var(--color-bg-canvas);
+  color: var(--color-text);
+  font-family: var(--font-main);
   overflow: hidden;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
 }
 
 #app {
