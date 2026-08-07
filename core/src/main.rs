@@ -1,30 +1,42 @@
 #![cfg_attr(
-    all(not(debug_assertions), target_os = "windows"),
-    windows_subsystem = "windows"
+	all(
+		not(debug_assertions), 
+		target_os = "windows"
+	),
+	windows_subsystem = "windows"
 )]
 
 use tauri::{Manager, WebviewUrl, WebviewWindowBuilder};
 
 fn main() {
-    tauri::Builder::default()
-        .setup(|app| {
-            let css = include_str!("theme/webview.css");
+	tauri::Builder::default()
+		.setup(|app| {
+				let css = include_str!("theme/webview.css");
 
-            let js = include_str!("theme/webview.js");
+				let js = include_str!("theme/webview.js");
 
-            let init_script = js.replace("__INJECT_CSS__", css);
+				let init_script = js.replace("__INJECT_CSS__", css);
 
-            WebviewWindowBuilder::new(app, "main", WebviewUrl::App("index.html".into()))
-                .title("Cospectra")
-                .initialization_script_for_all_frames(init_script)
-                .build()?;
+				WebviewWindowBuilder::new(
+					app, 
+					"main", 
+					WebviewUrl::App("index.html".into())
+				)
 
-            app.get_webview_window("main")
-                .ok_or("window not found")?
-                .set_size(tauri::Size::Physical(tauri::PhysicalSize::new(1024, 768)))?;
+				.title("Cospectra")
+				.initialization_script_for_all_frames(init_script)
+				.build()?;
 
-            Ok(())
-        })
-        .run(tauri::generate_context!())
-        .expect("error while running tauri application");
+				app.get_webview_window("main")
+					.ok_or("window not found")?
+					.set_size(
+						tauri::Size::Physical(
+							tauri::PhysicalSize::new(1024, 768)
+						)
+					)?;
+
+				Ok(())
+		})
+		.run(tauri::generate_context!())
+		.expect("error while running tauri application");
 }

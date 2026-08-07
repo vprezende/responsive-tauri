@@ -1,67 +1,114 @@
+@use 'sass:map' as map;
+
 // ===============================
 // Dark Theme (Default)
 // ===============================
 
-// Brand Identity
-$color-accent: #0066ff;
-$color-accent-hover: #1a75ff;
-$color-accent-subtle: rgba(0, 102, 255, 0.12);
-$color-accent-border: rgba(0, 102, 255, 0.35);
+$dark-theme: (
 
-// Backgrounds
-$color-bg-canvas: #0e0f12;
-$color-bg-workspace: #121418;
-$color-bg-sidebar: #17191e;
-$color-bg-tabbar: #0e0f12;
-$color-bg-input: #1b1e24;
-$color-bg-btn-hover: #222630;
-$color-bg-device-wrapper: #17191e;
+  // Brand Identity
+  color-accent: #0066ff,
+  color-accent-hover: #1a75ff,
+  color-accent-subtle: rgba(0, 102, 255, 0.12),
+  color-accent-border: rgba(0, 102, 255, 0.35),
 
-// Borders
-$color-border: #262a34;
-$color-border-subtle: #1e222b;
-$color-border-focus: #0066ff;
+  // Backgrounds
+  color-bg-canvas: #0e0f12,
+  color-bg-workspace: #121418,
+  color-bg-sidebar: #17191e,
+  color-bg-input: #1b1e24,
+  color-bg-btn-hover: #222630,
+  color-bg-device-wrapper: #17191e,
 
-// Text
-$color-text: #c5cbd3;
-$color-text-muted: #788292;
-$color-text-subtle: #4d5666;
-$color-text-strong: #f0f3f8;
+  // Scrollbars
+  color-scrollbar-thumb: rgba(255, 255, 255, 0.15),
+  color-scrollbar-thumb-hover: rgba(255, 255, 255, 0.28),
+  color-scrollbar-thumb-alt: rgba(255, 255, 255, 0.12),
+  color-scrollbar-thumb-alt-hover: rgba(255, 255, 255, 0.22),
 
-// Badge
-$color-badge-bg: #0066ff;
-$color-badge-text: #ffffff;
+  // Borders
+  color-border: #262a34,
+  color-border-subtle: #1e222b,
+  color-border-focus: #0066ff,
+
+  // Text
+  color-text: #c5cbd3,
+  color-text-muted: #788292,
+  color-text-subtle: #4d5666,
+  color-text-strong: #f0f3f8,
+
+  // Badge
+  color-badge-bg: #0066ff,
+  color-badge-text: #ffffff,
+
+  // Syntax Highlighting / Inspector Code
+  color-code-bg: #1a1b26,
+  color-code-text: #c0caf5,
+  color-code-tag: #e5c07b,
+  color-code-title: #565f89,
+  color-code-prop-name: #9cdcfe,
+  color-code-prop-val: #ce9178,
+  color-code-fn: #7aa2f7,
+  color-code-builtin: #7dcfff,
+  color-code-punct: #808080
+);
 
 // ===============================
 // Light Theme
 // ===============================
 
-// Brand Identity
-$light-color-accent: #0066ff;
-$light-color-accent-hover: #0052cc;
-$light-color-accent-subtle: rgba(0, 102, 255, 0.08);
-$light-color-accent-border: rgba(0, 102, 255, 0.25);
+$light-theme: (
 
-// Backgrounds
-$light-color-bg-canvas: #e8ecf1;
-$light-color-bg-workspace: #e8ecf1;
-$light-color-bg-sidebar: #ffffff;
-$light-color-bg-tabbar: #f0f3f7;
-$light-color-bg-input: #ffffff;
-$light-color-bg-btn-hover: #f0f3f7;
-$light-color-bg-device-wrapper: #ffffff;
+  // Brand Identity
+  color-accent: #0066ff,
+  color-accent-hover: #0052cc,
+  color-accent-subtle: rgba(0, 102, 255, 0.08),
+  color-accent-border: rgba(0, 102, 255, 0.25),
 
-// Borders
-$light-color-border: #d4dae3;
-$light-color-border-subtle: #e2e7ef;
-$light-color-border-focus: #0066ff;
+  // Backgrounds
+  color-bg-canvas: #e8ecf1,
+  color-bg-workspace: #e8ecf1,
+  color-bg-sidebar: #ffffff,
+  color-bg-input: #ffffff,
+  color-bg-btn-hover: #f0f3f7,
+  color-bg-device-wrapper: #ffffff,
 
-// Text
-$light-color-text: #2d3748;
-$light-color-text-muted: #64748b;
-$light-color-text-subtle: #94a3b8;
-$light-color-text-strong: #0f172a;
+  // Scrollbars
+  color-scrollbar-thumb: rgba(0, 0, 0, 0.15),
+  color-scrollbar-thumb-hover: rgba(0, 0, 0, 0.25),
+  color-scrollbar-thumb-alt: rgba(0, 0, 0, 0.12),
+  color-scrollbar-thumb-alt-hover: rgba(0, 0, 0, 0.22),
 
-// Badge
-$light-color-badge-bg: #0066ff;
-$light-color-badge-text: #ffffff;
+  // Borders
+  color-border: #d4dae3,
+  color-border-subtle: #e2e7ef,
+  color-border-focus: #0066ff,
+
+  // Text
+  color-text: #2d3748,
+  color-text-muted: #64748b,
+  color-text-subtle: #94a3b8,
+  color-text-strong: #0f172a,
+
+  // Badge
+  color-badge-bg: #0066ff,
+  color-badge-text: #ffffff,
+);
+
+// ===============================
+// Theme Getter
+// ===============================
+
+@function theme($theme, $key) {
+  @return map.get($theme, $key);
+}
+
+@mixin apply-theme {
+  .dark & {
+    @content($dark-theme);
+  }
+
+  .light & {
+    @content($light-theme);
+  }
+}

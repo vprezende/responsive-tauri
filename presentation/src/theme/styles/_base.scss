@@ -1,13 +1,24 @@
 @use 'variables' as *;
 
-::selection {
-  background-color: rgba(0, 102, 255, 0.35) !important;
-  color: #ffffff !important;
+#app {
+  width: 100%;
+  height: 100%;
 }
 
-::-moz-selection {
-  background-color: rgba(0, 102, 255, 0.35) !important;
-  color: #ffffff !important;
+html, body {
+  margin: 0;
+  padding: 0;
+  width: 100%;
+  height: 100%;
+
+  @include apply-theme using ($theme) {
+    background-color: theme($theme, color-bg-canvas);
+    color: theme($theme, color-text);
+  }
+  font-family: $font-main;
+  overflow: hidden;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
 }
 
 button:focus,
@@ -18,20 +29,12 @@ input:focus,
   box-shadow: none !important;
 }
 
-html, body {
-  margin: 0;
-  padding: 0;
-  width: 100%;
-  height: 100%;
-  background-color: $color-bg-canvas;
-  color: $color-text;
-  font-family: $font-main;
-  overflow: hidden;
-  -webkit-font-smoothing: antialiased;
-  -moz-osx-font-smoothing: grayscale;
+::selection {
+  background-color: rgba(0, 102, 255, 0.35) !important;
+  color: #ffffff !important;
 }
 
-#app {
-  width: 100%;
-  height: 100%;
+::-moz-selection {
+  background-color: rgba(0, 102, 255, 0.35) !important;
+  color: #ffffff !important;
 }

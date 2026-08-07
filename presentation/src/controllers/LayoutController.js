@@ -7,7 +7,6 @@ const DEFAULT_STATE = {
   currentUrl: '',
   hasNavigated: false,
   currentWidth: 1000,
-  activeTab: 'viewport',
   theme: 'dark',
 };
 
@@ -31,12 +30,11 @@ const loadState = () => {
 export function useLayoutController() {
   const saved = loadState();
 
-  const url = ref(saved.url || '');
+  const url = ref('');
   const currentUrl = ref('');
   const hasNavigated = ref(false);
   const minWidth = ref(320);
   const currentWidth = ref(saved.currentWidth || 1000);
-  const activeTab = ref(saved.activeTab || 'viewport');
   const theme = ref(saved.theme || 'dark');
 
   const saveState = () => {
@@ -47,26 +45,24 @@ export function useLayoutController() {
         currentUrl: currentUrl.value,
         hasNavigated: hasNavigated.value,
         currentWidth: currentWidth.value,
-        activeTab: activeTab.value,
         theme: theme.value,
       })
     );
   };
-
+  
   const toggleTheme = () => {
-
     if (theme.value === 'dark') {
-      theme.value = 'light'
-      return
+      theme.value = 'light';
+      return;
     }
     theme.value = 'dark'
-  }
+  };
 
   const setTheme = (value) => {
     if (value === 'dark' || value === 'light') {
-      theme.value = value
+      theme.value = value;
     }
-  }
+  };
 
   const navigationRefs = [
     url,
@@ -77,7 +73,6 @@ export function useLayoutController() {
   const layoutRefs = [
     minWidth,
     currentWidth,
-    activeTab,
   ]
 
   const userRefs = [
@@ -102,7 +97,6 @@ export function useLayoutController() {
   const layoutState = {
     minWidth,
     currentWidth,
-    activeTab,
   }
 
   const preferenceState = {
