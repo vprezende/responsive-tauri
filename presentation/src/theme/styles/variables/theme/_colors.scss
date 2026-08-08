@@ -103,19 +103,14 @@ $light-theme: (
   @return map.get($theme, $key);
 }
 
-// ===============================
-// Transitions
-// ===============================
-
-$transition-theme: (
-  background-color 0.15s ease-out,
-  border-color 0.15s ease-out,
-  color 0.15s ease-out,
-  box-shadow 0.15s ease-out
-);
-
 @mixin apply-theme {
-  transition: $transition-theme;
+  
+  transition: (
+    background-color 0.15s ease-out,
+    border-color 0.15s ease-out,
+    color 0.15s ease-out,
+    box-shadow 0.15s ease-out
+  );
 
   .dark & {
     @content($dark-theme);
