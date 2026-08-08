@@ -1,4 +1,4 @@
-.cospectra-scrollbar-hidden {
+.scrollbar-hidden {
   scrollbar-width: none;
 
   &::-webkit-scrollbar {

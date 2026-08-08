@@ -1,4 +1,4 @@
-document.documentElement.classList.add('cospectra-scrollbar-hidden');
+document.documentElement.classList.add('scrollbar-hidden');
 
 const style = document.createElement('style');
 

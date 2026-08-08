@@ -1,6 +1,6 @@
 import { ref, watch } from 'vue';
 
-const STORAGE_KEY = 'cospectra-state';
+const STORAGE_KEY = 'workspace-state';
 
 const DEFAULT_STATE = {
   url: '',
@@ -34,8 +34,8 @@ export function useLayoutController() {
   const currentUrl = ref('');
   const hasNavigated = ref(false);
   const minWidth = ref(320);
-  const currentWidth = ref(saved.currentWidth || 1000);
-  const theme = ref(saved.theme || 'dark');
+  const currentWidth = ref(saved.currentWidth);
+  const theme = ref(saved.theme);
 
   const saveState = () => {
     localStorage.setItem(

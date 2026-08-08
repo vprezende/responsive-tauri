@@ -6,35 +6,26 @@
 }
 
 html, body {
-  margin: 0;
-  padding: 0;
   width: 100%;
   height: 100%;
+  padding: 0;
+  margin: 0;
+  overflow: hidden;
 
   @include apply-theme using ($theme) {
     background-color: theme($theme, color-bg-canvas);
     color: theme($theme, color-text);
   }
+  
   font-family: $font-main;
-  overflow: hidden;
+  
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
 }
 
-button:focus,
-button:focus-visible,
-input:focus,
-*:focus-visible {
-  outline: none !important;
-  box-shadow: none !important;
-}
-
 ::selection {
-  background-color: rgba(0, 102, 255, 0.35) !important;
-  color: #ffffff !important;
-}
-
-::-moz-selection {
-  background-color: rgba(0, 102, 255, 0.35) !important;
-  color: #ffffff !important;
+  @include apply-theme using ($theme) {
+    background-color: theme($theme, color-accent-border) !important;
+    color: theme($theme, color-badge-text) !important;
+  }
 }

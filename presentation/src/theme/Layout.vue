@@ -217,9 +217,9 @@
         class="device-group"
       >
         <div class="size-info">
-          <span>Viewport</span>
-          <span>•</span>
-          <span>{{ Math.round(currentWidth) }} x 100%</span>
+          <span class="size-info-label">Viewport</span>
+          <div class="size-info-divider"></div>
+          <span class="size-info-value">{{ Math.round(currentWidth) }}px</span>
         </div>
 
         <div class="iframe-wrapper">

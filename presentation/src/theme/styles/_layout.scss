@@ -5,21 +5,13 @@
   flex-direction: row;
   position: relative;
   height: 100vh;
+  font-family: $font-main;
+  user-select: none;
+  -webkit-user-select: none;
 
   @include apply-theme using ($theme) {
     background-color: theme($theme, color-bg-workspace);
     color: theme($theme, color-text);
-  }
-  
-  font-family: $font-main;
-  user-select: none;
-  -webkit-user-select: none;
-  transition: 
-    background-color 0.15s ease-out, 
-    color 0.15s ease-out;
-
-  *, *::before, *::after {
-    transition: background-color 0.15s ease-out, border-color 0.15s ease-out, color 0.15s ease-out;
   }
 }
 
@@ -29,284 +21,275 @@ input[type="range"] {
 }
 
 .sidebar {
-  
   width: 18rem;
   padding: 0;
-
-  @include apply-theme using($theme) {
-    background: theme($theme, color-bg-sidebar);
-    border-right: 0.0625rem solid theme($theme, color-border);
-  }
-  
   order: 1;
   flex-shrink: 0;
   display: flex;
   flex-direction: column;
 
-  .titlebar {
-    height: 2.25rem;
-    flex-shrink: 0;
+  @include apply-theme using($theme) {
+    background: theme($theme, color-bg-sidebar);
+    border-right: 0.0625rem solid theme($theme, color-border);
   }
+}
 
-  .sidebar-inner {
-    margin: 0 1.25rem 1.5rem;
-    display: flex;
-    flex-direction: column;
-    flex: 1;
+.titlebar {
+  height: 2.25rem;
+  flex-shrink: 0;
+}
+
+.sidebar-inner {
+  margin: 0 1.25rem 1.5rem;
+  display: flex;
+  flex-direction: column;
+  flex: 1;
+}
+
+.sidebar-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 1.25rem;
+}
+
+.brand-group {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+}
+
+.brand-logo {
+  display: flex;
+  width: 1.25rem;
+  height: 1.25rem;
+  align-items: center;
+  justify-content: center;
+  font-size: 0.75rem;
+  font-weight: 800;
+  border-radius: 0.3125rem;
+  
+  @include apply-theme using ($theme) {
+    color: theme($theme, color-badge-text);
+    background: theme($theme, color-accent);
+    box-shadow: 0 0.125rem 0.5rem theme($theme, color-accent-subtle);
   }
+}
 
-  .sidebar-header {
-    display: flex;
-    align-items: center;
-    justify-content: space-between;
-    margin-bottom: 1.25rem;
+.title {
+  font-size: 0.8125rem;
+  font-weight: 700;
+  letter-spacing: 0.06rem;
+  text-transform: uppercase;
 
-    .brand-group {
-      display: flex;
-      align-items: center;
-      gap: 0.5rem;
-
-      .brand-logo {
-        display: flex;
-        width: 1.25rem;
-        height: 1.25rem;
-        align-items: center;
-        justify-content: center;
-        
-        font-size: 0.75rem;
-        font-weight: 800;
-        border-radius: 0.3125rem;
-        
-        @include apply-theme using ($theme) {
-          color: theme($theme, color-badge-text);
-          background: theme($theme, color-accent);
-          box-shadow: 0 0.125rem 0.5rem theme($theme, color-accent-subtle);
-        }
-      }
-
-      .title {
-        font-size: 0.8125rem;
-        font-weight: 700;
-        letter-spacing: 0.06rem;
-        text-transform: uppercase;
-
-        @include apply-theme using ($theme) {
-          color: theme($theme, color-text-strong);
-        }
-      }
-    }
-
-    .theme-toggle-btn {
-      width: 2.25rem;
-      height: 2.25rem;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      border: none;
-      background: transparent;
-      padding: 0;
-      
-      cursor: pointer;
-      border-radius: 0.5rem;
-      transition: background-color 0.15s ease;
-
-      @include apply-theme using ($theme) {
-        color: theme($theme, color-text-muted);
-
-        &:hover {
-          background: theme($theme, color-bg-btn-hover);
-        }
-      }
-    }
+  @include apply-theme using ($theme) {
+    color: theme($theme, color-text-strong);
   }
+}
 
-  .section {
-    margin: 0 0 1.5rem;
-  }
+.theme-toggle-btn {
+  width: 2.25rem;
+  height: 2.25rem;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border: none;
+  background: transparent;
+  padding: 0;
+  cursor: pointer;
+  border-radius: 0.5rem;
 
-  .section-title {
-    font-size: 0.6875rem;
-    font-weight: 700;
-    text-transform: uppercase;
-    letter-spacing: 0.06rem;
-    margin-bottom: 0.625rem;
-    display: flex;
-    align-items: center;
-    gap: 0.375rem;
+  @include apply-theme using ($theme) {
+    color: theme($theme, color-text-muted);
 
-    @include apply-theme using ($theme) {
-      color: theme($theme, color-text-muted);
-
-      &::before {
-        content: '';
-        display: inline-block;
-        width: 0.375rem;
-        height: 0.375rem;
-        background: theme($theme, color-accent);
-        border-radius: 50%;
-      }
-    }
-  }
-
-  .url-row {
-    display: flex;
-    gap: 0.5rem;
-  }
-
-  .url-input {
-    flex: 1;
-    padding: 0 0.75rem;
-    height: 2.375rem;
-    border-radius: 0.375rem;
-    font-family: $font-mono;
-    font-size: 0.75rem;
-    outline: none;
-    box-sizing: border-box;
-    user-select: auto;
-    transition: border-color 0.15s ease, box-shadow 0.15s ease;
-
-    @include apply-theme using ($theme) {
-      border: 0.0625rem solid theme($theme, color-accent-border);
-      background: theme($theme, color-bg-input);
-      color: theme($theme, color-text-strong);
-
-      &:focus {
-        border-color: theme($theme, color-border-focus);
-        box-shadow: 0 0 0 0.125rem theme($theme, color-accent-subtle);
-      }
-    }
-  }
-
-  .btn-icon {
-    width: 2.375rem;
-    height: 2.375rem;
-    box-sizing: border-box;
-    border-radius: 0.375rem;
-    font-size: 0.875rem;
-    cursor: pointer;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    flex-shrink: 0;
-    transition: all 0.15s ease;
-
-    @include apply-theme using ($theme) {
-      border: 0.0625rem solid theme($theme, color-border);
-      background: theme($theme, color-bg-input);
-      color: theme($theme, color-text-muted);
-
-      &:hover {
-        border-color: theme($theme, color-accent);
-        box-shadow: 0 0.125rem 0.5rem theme($theme, color-accent-subtle);
-      }
-    }
-  }
-
-  .size-row {
-    display: flex;
-    align-items: center;
-    justify-content: space-between;
-    margin-top: 0.625rem;
-    padding: 0.375rem 0.625rem;
-    border-radius: 0.375rem;
-
-    @include apply-theme using ($theme) {
-      background: theme($theme, color-bg-input);
-      border: 0.0625rem solid theme($theme, color-border-subtle);
-    }
-  }
-
-  .size-label {
-    font-size: 0.6875rem;
-    font-weight: 600;
-    text-transform: uppercase;
-    letter-spacing: 0.04rem;
-
-    @include apply-theme using ($theme) {
-      color: theme($theme, color-text-muted);
-    }
-  }
-
-  .size-value {
-    font-family: $font-mono;
-    font-size: 0.75rem;
-    font-weight: 600;
-
-    @include apply-theme using ($theme) {
-      color: theme($theme, color-text-strong);
-    }
-  }
-
-  .width-slider {
-    width: 100%;
-    height: 0.375rem;
-    -webkit-appearance: none;
-    appearance: none;
-    border-radius: 0.25rem;
-    outline: none;
-    cursor: pointer;
-    margin: 0.25rem 0;
-
-    @include apply-theme using ($theme) {
-      background: theme($theme, color-border);
-
-      &::-webkit-slider-thumb {
-        -webkit-appearance: none;
-        appearance: none;
-        width: 1.125rem;
-        height: 1.125rem;
-        border-radius: 50%;
-        background: theme($theme, color-accent);
-        border: none;
-      }
-
-      &::-moz-range-thumb {
-        width: 1.125rem;
-        height: 1.125rem;
-        border-radius: 50%;
-        background: theme($theme, color-accent);
-        border: 0.125rem solid theme($theme, color-bg-sidebar);
-      }
-    }
-  }
-
-  .preset-buttons {
-    display: grid;
-    grid-template-columns: repeat(3, 1fr);
-    gap: 0.375rem;
-    margin-top: 0.75rem;
-  }
-
-  .btn-preset {
-    padding: 0.375rem 0;
-    border-radius: 0.375rem;
-    font-family: $font-mono;
-    font-size: 0.6875rem;
-    font-weight: 500;
-    cursor: pointer;
-    transition: all 0.15s ease;
-
-    @include apply-theme using ($theme) {
-      border: 0.0625rem solid theme($theme, color-border-subtle);
-      background: theme($theme, color-bg-input);
-      color: theme($theme, color-text);
-
-      &:hover {
-        border-color: theme($theme, color-accent-border);
-        color: theme($theme, color-text-strong);
-        background: theme($theme, color-accent-subtle);
-      }
-
-      &.active {
-        border-color: theme($theme, color-accent);
-        background: theme($theme, color-accent-subtle);
-        color: theme($theme, color-accent);
-        font-weight: 600;
-      }
+    &:hover {
+      background: theme($theme, color-bg-btn-hover);
     }
   }
 }
 
+.section {
+  margin: 0 0 1.5rem;
+}
+
+.section-title {
+  font-size: 0.6875rem;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.06rem;
+  margin-bottom: 0.625rem;
+  display: flex;
+  align-items: center;
+  gap: 0.375rem;
+
+  @include apply-theme using ($theme) {
+    color: theme($theme, color-text-muted);
+
+    &::before {
+      content: '';
+      display: inline-block;
+      width: 0.375rem;
+      height: 0.375rem;
+      background: theme($theme, color-accent);
+      border-radius: 50%;
+    }
+  }
+}
+
+.url-row {
+  display: flex;
+  gap: 0.5rem;
+}
+
+.url-input {
+  flex: 1;
+  padding: 0 0.75rem;
+  height: 2.375rem;
+  border-radius: 0.375rem;
+  font-family: $font-mono;
+  font-size: 0.75rem;
+  outline: none;
+  box-sizing: border-box;
+  user-select: auto;
+
+  @include apply-theme using ($theme) {
+    border: 0.0625rem solid theme($theme, color-border);
+    background: theme($theme, color-bg-input);
+    color: theme($theme, color-text-strong);
+
+    &:focus {
+      border-color: theme($theme, color-border-focus);
+      box-shadow: 0 0 0 0.125rem theme($theme, color-accent-subtle);
+    }
+  }
+}
+
+.btn-icon {
+  display: flex;
+  flex-shrink: 0;
+  align-items: center;
+  justify-content: center;
+  width: 2.375rem;
+  height: 2.375rem;
+  box-sizing: border-box;
+  border-radius: 0.375rem;
+  font-size: 0.875rem;
+  cursor: pointer;
+
+  @include apply-theme using ($theme) {
+    border: 0.0625rem solid theme($theme, color-border);
+    background: theme($theme, color-bg-input);
+    color: theme($theme, color-text-muted);
+
+    &:hover {
+      border-color: theme($theme, color-accent);
+      box-shadow: 0 0.125rem 0.5rem theme($theme, color-accent-subtle);
+    }
+  }
+}
+
+.size-row {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-top: 0.625rem;
+  padding: 0.375rem 0.625rem;
+  border-radius: 0.375rem;
+
+  @include apply-theme using ($theme) {
+    background: theme($theme, color-bg-input);
+    border: 0.0625rem solid theme($theme, color-border-subtle);
+  }
+}
+
+.size-label {
+  font-size: 0.6875rem;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.04rem;
+
+  @include apply-theme using ($theme) {
+    color: theme($theme, color-text-muted);
+  }
+}
+
+.size-value {
+  font-family: $font-mono;
+  font-size: 0.75rem;
+  font-weight: 600;
+
+  @include apply-theme using ($theme) {
+    color: theme($theme, color-text-strong);
+  }
+}
+
+.width-slider {
+  width: 100%;
+  height: 0.375rem;
+  -webkit-appearance: none;
+  appearance: none;
+  border-radius: 0.25rem;
+  outline: none;
+  cursor: pointer;
+  margin: 0.25rem 0;
+
+  @include apply-theme using ($theme) {
+    background: theme($theme, color-border);
+
+    &::-webkit-slider-thumb {
+      -webkit-appearance: none;
+      appearance: none;
+      width: 1.125rem;
+      height: 1.125rem;
+      border-radius: 50%;
+      background: theme($theme, color-accent);
+      border: none;
+    }
+
+    &::-moz-range-thumb {
+      width: 1.125rem;
+      height: 1.125rem;
+      border-radius: 50%;
+      background: theme($theme, color-accent);
+      border: 0.125rem solid theme($theme, color-bg-sidebar);
+    }
+  }
+}
+
+.preset-buttons {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 0.375rem;
+  margin-top: 0.75rem;
+}
+
+.btn-preset {
+  padding: 0.375rem 0;
+  border-radius: 0.375rem;
+  font-family: $font-mono;
+  font-size: 0.6875rem;
+  font-weight: 500;
+  cursor: pointer;
+
+  @include apply-theme using ($theme) {
+    border: 0.0625rem solid theme($theme, color-border-subtle);
+    background: theme($theme, color-bg-input);
+    color: theme($theme, color-text);
+
+    &:hover {
+      border-color: theme($theme, color-accent-border);
+      color: theme($theme, color-text-strong);
+      background: theme($theme, color-accent-subtle);
+    }
+
+    &.active {
+      border-color: theme($theme, color-accent);
+      background: theme($theme, color-accent-subtle);
+      color: theme($theme, color-accent);
+      font-weight: 600;
+    }
+  }
+}
 
 .canvas {
   position: relative;
@@ -317,8 +300,10 @@ input[type="range"] {
 
   @include apply-theme using ($theme) {
     background-color: theme($theme, color-bg-canvas);
-    background-image: 
-      radial-gradient(theme($theme, color-border) 1px, transparent 1px);
+    background-image: radial-gradient(
+      theme($theme, color-border) 1px, 
+      transparent 1px
+    );
   }
 }
 
@@ -333,45 +318,45 @@ input[type="range"] {
     background: theme($theme, color-bg-sidebar);
     border: 0.0625rem solid theme($theme, color-border);
   }
+}
 
-  .welcome-badge {
-    display: inline-flex;
-    align-items: center;
-    gap: 0.375rem;
-    padding: 0.25rem 0.625rem;
-    border-radius: 6.25rem;
-    font-size: 0.6875rem;
-    font-weight: 700;
-    letter-spacing: 0.04rem;
-    text-transform: uppercase;
-    margin-bottom: 1.25rem;
+.welcome-badge {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.375rem;
+  padding: 0.25rem 0.625rem;
+  border-radius: 6.25rem;
+  font-size: 0.6875rem;
+  font-weight: 700;
+  letter-spacing: 0.04rem;
+  text-transform: uppercase;
+  margin-bottom: 1.25rem;
 
-    @include apply-theme using ($theme) {
-      background: theme($theme, color-accent-subtle);
-      border: 0.0625rem solid theme($theme, color-accent-border);
-      color: theme($theme, color-accent);
-    }
+  @include apply-theme using ($theme) {
+    background: theme($theme, color-accent-subtle);
+    border: 0.0625rem solid theme($theme, color-accent-border);
+    color: theme($theme, color-accent);
   }
+}
 
-  h1 {
-    font-size: 1.5rem;
-    font-weight: 800;
-    margin: 0 0 0.75rem;
-    letter-spacing: -0.02rem;
+.welcome-screen h1 {
+  font-size: 1.5rem;
+  font-weight: 800;
+  margin: 0 0 0.75rem;
+  letter-spacing: -0.02rem;
 
-    @include apply-theme using ($theme) {
-      color: theme($theme, color-text-strong);
-    }
+  @include apply-theme using ($theme) {
+    color: theme($theme, color-text-strong);
   }
+}
 
-  p {
-    font-size: 0.875rem;
-    line-height: 1.5;
-    margin: 0;
+.welcome-screen p {
+  font-size: 0.875rem;
+  line-height: 1.5;
+  margin: 0;
 
-    @include apply-theme using ($theme) {
-      color: theme($theme, color-text-muted);
-    }
+  @include apply-theme using ($theme) {
+    color: theme($theme, color-text-muted);
   }
 }
 
@@ -389,18 +374,57 @@ input[type="range"] {
   display: flex;
   align-items: center;
   gap: 0.5rem;
-  padding: 0.3125rem 0.875rem;
+  padding: 0.375rem 0.375rem 0.375rem 1rem;
+  border-radius: 6.25rem;
+  font-family: $font-main;
+  white-space: nowrap;
+
+  @include apply-theme using ($theme) {
+    background: theme($theme, color-bg-sidebar);
+    border: 1px solid theme($theme, color-border);
+  }
+}
+
+.size-info-label {
+  font-size: 0.65rem;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.06em;
+  opacity: 0.7;
+  
+  @include apply-theme using ($theme) {
+    color: theme($theme, color-text);
+  }
+}
+
+.size-info-divider {
+  width: 1px;
+  height: 0.875rem;
+  margin: 0 0.125rem;
+  
+  @include apply-theme using ($theme) {
+    background: theme($theme, color-border);
+  }
+}
+
+.size-info-value {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 0.25rem 0.75rem;
   border-radius: 6.25rem;
   font-family: $font-mono;
   font-size: 0.75rem;
   font-weight: 600;
   letter-spacing: 0.02rem;
-  white-space: nowrap;
+  font-variant-numeric: tabular-nums;
+  width: 6ch;
+  box-sizing: content-box;
 
   @include apply-theme using ($theme) {
-    color: theme($theme, color-badge-text);
     background: theme($theme, color-accent);
-    box-shadow: 0 0.25rem 0.875rem theme($theme, color-accent-subtle);
+    color: theme($theme, color-badge-text);
+    box-shadow: 0 0.125rem 0.375rem rgba(theme($theme, color-accent), 0.4);
   }
 }
 
